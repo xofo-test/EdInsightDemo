@@ -1,0 +1,2280 @@
+<html class="t-chrome t-chrome153"><head><title>
+	Online Test
+</title><link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-yJpxAFV0Ip/w63YkZfDWDTU6re/Oc3ZiVqMa97pi8uPt92y0wzeK3UFM2yQRhEom" crossorigin="anonymous">  
+    <style type="text/css">
+        /*Session TimeOut Pop-Up*/
+
+        /* Outer */
+        .popup {
+            width: 100%;
+            height: 100%;
+            display: none;
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            background: rgba(0,0,0,0.75);
+            z-index: 20000;
+        }
+        /* Inner */
+        .popup-inner {
+            min-width: 500px;
+            max-width: 650px;
+            width: 90%;
+            padding: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            box-shadow: 0px 2px 6px rgba(0,0,0,1);
+            border-radius: 3px;
+            background-color: lightgrey;
+            border: 1px solid #0991ea;
+        }
+        /* Close Button */
+        .popup-close {
+            width: 30px;
+            height: 30px;
+            padding-top: 4px;
+            display: inline-block;
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            transition: ease 0.25s all;
+            -webkit-transform: translate(50%, -50%);
+            transform: translate(50%, -50%);
+            border-radius: 1000px;
+            background: rgba(0,0,0,0.8);
+            font-family: Arial, Sans-Serif;
+            font-size: 20px;
+            text-align: center;
+            line-height: 100%;
+            color: #fff;
+        }
+
+            .popup-close:hover {
+                -webkit-transform: translate(50%, -50%) rotate(180deg);
+                transform: translate(50%, -50%) rotate(180deg);
+                background: rgba(0,0,0,1);
+                text-decoration: none;
+            }
+
+        .centre-align {
+            display: block;
+            text-align: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            -ms-touch-action: manipulation;
+            touch-action: manipulation;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-image: none;
+            border: 1px solid black;
+            border-radius: 4px;
+        }
+
+        .alarm {
+            background-image: url() !important;
+            width: 41px;
+            height: 51px;
+            background-repeat: no-repeat;
+            margin: auto auto;
+        }
+
+        /*Session TimeOut Pop-Up*/
+
+        /*Warning pop-up*/
+
+        .warning {
+            background-image: url("../../Images/warning.gif") !important;
+            width: 101px;
+            height: 100px;
+            background-repeat: no-repeat;
+            margin: auto auto;
+        }
+
+        .parent_nested {
+            float: left;
+            margin-right: 10px;
+            white-space: pre-line;
+            text-align: center;
+        }
+
+        .popup div {
+            font-size: 10pt;
+        }
+
+        .footer {
+            width: 100%;
+            background-color: #ccc;
+            display: inline-block;
+            border-radius: 5px;
+        }
+
+        .footerButton {
+            float: right;
+            margin-bottom: 10px;
+            margin-right: 10px;
+        }
+
+        /*Warning pop-up*/
+    </style>
+
+    <script type="text/javascript">
+
+         //------------ Warning Pop-Up
+        var proceedFlag = false;
+
+        function ShowWarningPopUp(subContent, buttonText, sourceControl) {
+
+            if (!proceedFlag) {
+                var popupDiv = $('[data-popup="popup-warning"]');
+                var subContentctrl = popupDiv.find('#subcontent');
+                var button = popupDiv.find('[buttonType="customize"]');
+
+                //empty sapn before adding content
+                subContentctrl.find('span').remove();
+
+                $('<span>' + subContent + '</span>').appendTo(subContentctrl);
+                button.text(buttonText);
+
+                //showing the warning pop-up
+                $('[data-popup="popup-warning"]').fadeIn(350);
+
+                //close icon
+                $('[data-popup-close="popup-warning"]').on('click', function (e) {
+                    $('[data-popup="popup-warning"]').fadeOut(350);
+                    e.preventDefault();
+                    if (jQuery(this).attr("proceed") == "true") {
+                        proceedFlag = true;
+                        sourceControl.click();
+                    }
+                });
+            }
+            return proceedFlag;
+        }
+
+        //call when unfinalize an assessment
+        function ShowUnfinalizeWarningAlert(sender) {
+            var subcontent = '<b>WARNING:</b> Unfinalizing this assessment will permanently delete ALL administrations AND test results.\n\n\n' +
+                `Any previously printed login codes or bubble sheets will no longer be usable.This will apply to the <u>entire district</u>, not just your account.\n\nDo you wish to proceed?`;
+
+            return ShowWarningPopUp(subcontent, 'Unfinalize', sender);
+        }
+
+        //call when delete the administration under an assessment
+        function ShowDeleteAdministrationWarningAlert(sender) {
+            var subcontent = '<b>WARNING:</b> Deleting this administration will permanently delete ALL test results\n\n\n' +
+                'Any previously printed login codes or bubble sheets will no longer be usable. This will apply to the <u>entire district</u>, not just your account.';
+
+            return ShowWarningPopUp(subcontent, 'Delete', sender);
+
+        }
+
+        //call when delete an assessment
+        function ShowDeleteAssessmentWarningAlert(sender) {
+            var subcontent = '<b>WARNING:</b> Deleting this assessment will permanently delete ALL administrations AND test results.\n\n\n' +
+                'Any previously printed login codes or bubble sheets will no longer be usable. This will apply to the <u>entire district</u>, not just your account.\n\nDo you wish to proceed?';
+
+            return ShowWarningPopUp(subcontent, 'Delete', sender);
+
+        }
+        //------------ Warning Pop-Up
+
+    </script>
+
+    
+    <link href="/EdInsight/WebResource.axd?d=VdPoLqp1pEU6N0-IfFplZDnJ7htGtkzHUepVi97ZFxxEKoCkliYkzAZrtqbjw-qCHKK-7gu9Qgme0VAIrSgTbmVLkSrUybfnK-9p-miRLZmnYBZRE-sOwM4DblBW1ErREpMoOHBR-FYC6QmIHVlNkg2&amp;t=638973418001605007" type="text/css" rel="stylesheet" class="Telerik_stylesheet"><link href="/EdInsight/WebResource.axd?d=6d0ORl_GDQ8il0vfaye5YXpGZEFJwvIUXOERhHDH6IGjh4Mie1fdzamqAPBV8FPI9Toe6_hFFwoB9Eo57eZbld50LtcAu8ML5SWV9_geffCCksf3kqwUuD9BdI5AzVwxob9RMF35x4dGNx3YSp6kNA2&amp;t=638973418001605007" type="text/css" rel="stylesheet" class="Telerik_stylesheet"><link href="/EdInsight/WebResource.axd?d=U4fmqBE__aLMLwH7DJyJBKKMj_54rOlL0QAgziSH3XcQVWGGCgV5V2oU3ML1pctH23tOHL3HY0HmLfCpqTCFbnZGev7CrYksWX0man4fUBG7GwTFhYni58-hlgpDK-yYyffE-VxIikqwGIXJgS5MXg2&amp;t=638973418001605007" type="text/css" rel="stylesheet" class="Telerik_stylesheet"><link href="/EdInsight/WebResource.axd?d=Ns--GulfxgExb3ayjSWpk3TBMiSvJYzGSNvrEUzUIhI7UeK0uL0PfRrLtrFY7PGhys93ezB42vujtL_Z3IOX5YBY2dqgyK9L8tGL9cRUzpBRrVrC-graBzkPIUIxkSvB_UI6i3WY4jwy6V64mE6724PF2jvEXuuXkZNhFFEg0Uk1&amp;t=638973418001605007" type="text/css" rel="stylesheet" class="Telerik_stylesheet"><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MathJax .mi, .MathJax .mo, .MathJax .mn, .MathJax .mtext {direction: ltr; display: inline-block}
+.MathJax .ms, .MathJax .mspace, .MathJax .mglyph {direction: ltr; display: inline-block}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><style id="xofo-prototype-shell">html,body{margin:0!important;padding:0!important}.xofo-shell-header{position:relative;z-index:99999;font-family:Arial,Helvetica,sans-serif}.xofo-topbar{height:47px;background:#1779ae;color:#fff;display:flex;align-items:center;padding:0 9px;gap:10px}.xofo-logo{font-size:22px;font-weight:700;min-width:105px}.xofo-search{height:27px;line-height:27px;flex:1;background:#fff;color:#777;border-radius:15px;padding:0 14px;font-size:11px;border:1px solid #ddd}.xofo-account{font-size:10px;line-height:12px;text-align:right;min-width:170px}.xofo-account span{opacity:.95}.xofo-icon{font-size:17px;margin-left:3px}.xofo-menu{height:29px;display:flex;align-items:center;gap:25px;padding:0 11px;background:#fff;border-bottom:1px solid #d6d6d6;color:#222;font:10px Arial}.xofo-menu-right{margin-left:auto}.xofo-shell-footer{height:25px;background:#187db5;color:#fff;font:9px Arial;line-height:25px;padding:0 10px;box-sizing:border-box}.xofo-shell-footer span{margin-right:14px}.xofo-shell-footer .f-right{float:right;margin-right:0}.xofo-nav{position:fixed;z-index:100000;right:10px;bottom:34px;display:flex;gap:4px;background:rgba(255,255,255,.94);padding:4px;border:1px solid #aaa;border-radius:3px;font:10px Arial}.xofo-nav a{display:inline-block;background:#eee;border:1px solid #999;padding:3px 7px;cursor:pointer;color:#111;text-decoration:none}.xofo-nav a.next{background:#177db6;color:#fff;border-color:#177db6}@media(max-width:900px){.xofo-menu{gap:10px}.xofo-nav{left:5px;right:auto;overflow:auto;max-width:calc(100vw - 10px)}} </style></head>
+<body><div id="MathJax_Message" style="display: none;"></div>
+    <form name="aspnetForm" method="post" action="./LocalAssessmentOnlineTest.aspx?STID=Dezb7sMtSkHF%2f2xmkYjyig%3d%3d" id="aspnetForm" enctype="multipart/form-data">
+<div>
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="">
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="1ABwquMU0WtvVciKQuwFF+xbeBPVMJHbB6uffdmXUiGr1TYhxZqd64ZN1ZtdANIb2OVF9/h5/ckPxsNkI+U/sngZhTp8bqmExgpUUN8Di9Jy+W29haFLZmtc00sQtLPkpHqeTIDfnhyg9EmWrMrsRCyKhZdLvD1ZnPTYlqrjq6Nxgqh9a5LVLaSdhOYj2gvyfYow2+78nrrcPVmCpsZwufBfi6WsynVTraouYeglgW5Cklu4xfLPQt9Vw6AfIHdrYMvqLT2IL+YthxihET8ZOj5g8njmSlEaGABHa54naTEcsH86dW3x4eMu2sE3Xacgp2f4N+paoVDoXTJCIMlIBrT4Mbm2JFOFtOR59ulwMkM=">
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['aspnetForm'];
+if (!theForm) {
+    theForm = document.aspnetForm;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/EdInsight/WebResource.axd?d=pynGkmcFUV13He1Qd6_TZK_fa-FZMLpKuSN5SnLJGRbXBProAX8dXuCtM1P-DSUg8nEgqWpkQ8pv9_efTCkl5A2&amp;t=638883469099574018" type="text/javascript"></script>
+
+
+<script src="/EdInsight/ScriptResource.axd?d=D9drwtSJ4hBA6O8UhT6CQpezXXHPNQb26PPWaSaeUuUIHnwMi92mvlphCaHvXChyu0J8ik20vkLhY4Mm1-DJwJJ30i4EMvifqELAe4OgQrwcitMzsviaJMb-3M90h3Q13hkOQqHLpzab1jPkNWpPHIqbNDIQG5fQ5_zxJtUTzFw1&amp;t=74a40145" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+if (typeof(Sys) === 'undefined') throw new Error('ASP.NET Ajax client-side framework failed to load.');
+//]]>
+</script>
+
+<script src="/EdInsight/ScriptResource.axd?d=JnUc-DEDOM5KzzVKtsL1tToXyLaUIpakjl-wGFA9BzwLcFhFgV1wWDi9p8nmC-HuTL_-8g3UnY6kf0F_wvb3o2OwK66x5jIgVEKmB_LAOi3ywjWwe1isAM8_6xQnP9jFdfz2R2BFmJDMNH5hLioKfX14ZDngo1nIR7cbq1jJaXs-tASJpbN9VQHRImvNrj920&amp;t=74a40145" type="text/javascript"></script>
+<script src="/EdInsight/ScriptResource.axd?d=TDVjdgRbdvNAY3tnbizUcOKJ9xzujH__oCPbSCt_cgXSx84_MdagjDPxXvf9Z-f72fR_xpny4qgsExyyAM7lPO37RanZLxnk6h7t7YhWUmE9vZt8lom5xkG6mnaWtTa40&amp;t=3322f07f" type="text/javascript"></script>
+<script src="/EdInsight/ScriptResource.axd?d=sF8Y0c2qLAfpveBK9gLo7KUr1evyUfOYhBb5Ycho8jpmMUKnGUrWF1gynm0v3mwqBr-hgHO90IgGy2umeVfftN1nJU7C0izZn12aBeaKby8PvjzyngNsX8u-bV8OwMLa0&amp;t=3322f07f" type="text/javascript"></script>
+<script src="/EdInsight/ScriptResource.axd?d=mbGZm65DzNC0tMTq0ElbcetPYbIebi8X5qGLKB0vxNVPJHN2jVlzPu57CIMLNfIxQw7eyENrL08Q-Q6nhnSEGcc5PF0bGUUOaTHSwyglVQtyvg_JTRp_e65EGhQ_QuwK_NTM3L96xeOewdU_06edZA2&amp;t=3322f07f" type="text/javascript"></script>
+<script src="/EdInsight/ScriptResource.axd?d=cmIcXiVJ__exjjpjrN730pCJqdBu-APZSuf9kLpLcrBXoNsREXkgnKPPu3oL5stlN1S5W02-z-bV6S2Q6gmWistiIqmAkJ7_mJ7wU_o1z1awnv12ZR3gygwV12cNVLfJp_rqbyZoEMOMtome3eGwdA2&amp;t=3322f07f" type="text/javascript"></script>
+<script src="/EdInsight/ScriptResource.axd?d=aoSSiMnLNTC20U5L7LFIKncPa-p-E5kqZAzysFLuFjgNESBdHuqAfeNvKABz76TYXVGrBJMVbGOyn5ZXMf4ZnwTrwVbGHn9rfupfZrQjJ9vUur0sy7UB4eEutYJEiZsUauZAnF_usmlELBdCS0TwneUrm8n9C9rHjoJ9QD1x1LU1&amp;t=3322f07f" type="text/javascript"></script>
+<script src="/EdInsight/ScriptResource.axd?d=GUyLPMOEFhffuIMm6XZ0oEOa4_eym0DQZ5y7d0vLhdY6lAFQ3qu9MpIW__XKUaL4cLbyfSEH2o1GUIf3o6E5QPoPIp5DbCJKZ7J3AsWlW1OqGmKj86fdddCaJdPg7w7W9Nl89jLHvdjJqguwCqTv_sSH0drZsZH7clVcerU3Flw1&amp;t=3322f07f" type="text/javascript"></script>
+<script src="/EdInsight/ScriptResource.axd?d=A22-SyJgKhJ5FWUJePaPlGVmdznJ7oe7JLLP8I2XYeeKozzdY0-tS95qJ2khisxNVxhWLlhuUf3I7lqKgfheFHlmJG-L7OHO4hobWOKdFgo5gHthHq0QdZm54GXVVk0jdYP1aA541FGWGLvExNPqtw2&amp;t=3322f07f" type="text/javascript"></script>
+<script src="/EdInsight/ScriptResource.axd?d=utaAJrK4EroNO-KNr3p19PwL5ndpUIDw6CkN7hrtrOfzYzCii-GlnRL4PZkOXk2t1fVvHIRz_6LV0D0RNmbryiILRX6b24a8Vv5DHw0_yNdFFLFpLL13D8VKJCjkOYSxVd-ErN_y2D7hw8CGtJBkkg2&amp;t=3322f07f" type="text/javascript"></script>
+<script src="/EdInsight/ScriptResource.axd?d=mxxObI9nroQxDBLgf-QlAnU1c4qQ-Ujex8_qVMq01o3NrbGQX2KjA4GbWNAUa8OkKr8q1ju5XnHMwO6HrAr4bSFvoMJOHMR2mAgdQ_tsgMADfp10OObebG1Aq45NJvUa2HQGCOf7eCQ9z4BVFuI-QRV5D76vnbnqS-zbTMqQw9g1&amp;t=3322f07f" type="text/javascript"></script>
+<script src="/EdInsight/ScriptResource.axd?d=ei_BvuPu_kfWuvcXX4wAON5Cm64tnGsSaK9w_IDADxEEG1NWvJlARMrCCiPVqHsadYnFHnNYYNpKQ7P1r5suEn1jnVEs7DFT2KzbpI3EsDTPyDPDVSIhrqlz-On61dQYtyCQO8y5OJbJWBbfLbpIhg2&amp;t=3322f07f" type="text/javascript"></script>
+<script src="/EdInsight/ScriptResource.axd?d=qsRpKh5Y3Y02fhrPxQCAxd3FvjWv-vcFlQAJCNWv6TenSngtpoHn0F88YkEStgQ6MCX9sZXbL0MclEFUbXaFs3LlFWGbBwtFrARz0Qia3a5zqdz8HLdQHrQVORBKYM7nS_sG-8x9NkqH5k-2Eqqnug2&amp;t=3322f07f" type="text/javascript"></script>
+<script src="/EdInsight/ScriptResource.axd?d=LxjRs3XOu8Cy2bbYGMzbCpKrCSxlv9gw4gfwR3AckE638M_NV2sgv8Xt14fBxRkJ3WjQdnSaW4CYx-55ci2tPd7SE2q79-W6HrIhkqgGJj3FdSptAdCuPMiqXHRxirZlsDKMC5yqvUZj0rZM-FIVmipdho0LVJ-AmmRGlz66tJft2mZty6QOP9vUEYIhofGi0&amp;t=3322f07f" type="text/javascript"></script>
+<script src="/EdInsight/ScriptResource.axd?d=86EhAqQjfuMKlbK4FWyenGj4Aq4FNu65TLNLz0b_xIpuFEC3dikjdtWTG8whzVhGQpTVH98N0Q_k1-bTU9eeZ3GY_OqB6QoX9xzy5AfNxrBuf2JlaJ7csOKpItMAoNdj_YOE0tkdhQBO7a54W6Pgq3HDqmPVxzkn1K-vVCUi-701&amp;t=3322f07f" type="text/javascript"></script>
+<script src="/EdInsight/ScriptResource.axd?d=wl5RKBCXTWDacHhxsSq8Q7whwvj51EnYcNFlPN6POvpN2gqIIKoaISVV2-19rNqkQAmVRQQFOgjHICH9k4dz2rjkBFUJz0J2tZrfoOVn-4zRtlcSzpC0RwXVVjh1ti7_3SYU59enx6Fmjx_5iyrPaw2&amp;t=3322f07f" type="text/javascript"></script>
+<script src="/EdInsight/ScriptResource.axd?d=OhiQVM8i2feYV04aiMKgwt4TcjLb2EhCC1_nTKC_YvONPp6MZ1Gxg2FcnrpAwwpBWLYNm2IOKyD-2HtyX_zSstgAtBexYJo-629kTW942lRZWkcFmOam7kQwPSo2CVeKjd_rcO_BuKQQLdeD_FQEnA2&amp;t=3322f07f" type="text/javascript"></script>
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="0524BC85">
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="Bav3H5W89/qXXlH8okwt6ss//TQMJYGn2s8rnKNf/3EVWYtEriYl0zR8vMglvJPs1WWBPyWUfqc4F7ymvLBq7Jb6LVhyRAaGcjSlptPd/KVg4tR/Ez8pyfLfhC+G7NrzYHUGz0XxEZkVqRC8v8UZi6WXi+suE7r1bsxBcYYcAxXd9Fpstk7ucyGDxhFqLVDWoKHyIDsi1+RPhhG175tbp2UoSclqUHACEZSnuHirPCa2x/o+uFjOWi4C3jWwV5IV49hEnRCP/1D8ZHXi9AgSf15Yb8vl6o5UjEJaOmutkULoaHfDf1OtAPw1Twv5KTk+Ye+2wGKufYApSpa+Zxgbr7BqKWT9emwh1DNEGw98CGh6xrXXDxBJBGMIyGsFshOBdG8AHR3UyiG/PrUpU5093QBDVp0edgKWeGlcobuHiuU52Nup0LqJJMvy31bNcRoK9RxqSpytefmyuuZtqAiHJfPq6cacD4thI8WmpHpWLhkO9ZK7NwaO9aS7+vebenvAy4OXJ6wE0BzWRvklFhedcZthydaBSDdN+Ay3eFnFtAJN5XIQMihZSRgOu391BDp1ihONrEn5KPJrNr1zaTJm1U7J1FMRyB3txtU3QrbecI9b7ek2meTbDm0u0nnUrmhJn/+MErZVm0q4awGIclp8zNgE+0G7U7H3xpH+6esqZMhKBzkIhlLFJivCmmMonniPpFvVQTjRMWQeyPKO5ShZCQuIsB6/Hhr1X4rwCwPuKjkrQgpKI/y8D6yHl4cyc7c4RRP5O3fm87GVW2InV1ObHJ5eTKN88Ew7/fqIzGQGsxLnzuqsz1T2YziHox5o1h1pPByfokWnE47nRcBFhtgCUA==">
+</div>
+        <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ctl00$ScriptManager', 'aspnetForm', ['tctl00$ContentPlaceHolder1$updatePanelStudentTest','','tctl00$RadAjaxManagerSU',''], [], ['ctl00$ContentPlaceHolder1$btnNext',''], 90, 'ctl00');
+//]]>
+</script>
+
+        
+        <!-- 2020.2.617.45 --><div id="ctl00_RadAjaxManagerSU" style="display: none;">
+	<span id="ctl00_RadAjaxManager" style="display:none;"></span>
+</div>
+        
+          <input type="hidden" name="ctl00$hdnEqualWebSiteKey" id="ctl00_hdnEqualWebSiteKey"> 
+        <div>
+            
+    <style type="text/css">
+        /* Modal Popup Extender */ .modalBackground {
+            background-color: Gray;
+            filter: alpha(opacity=70);
+            opacity: 0.7;
+        }
+
+        body {
+            background-color: #cdf1ff;
+            margin-left: 0px;
+            margin-top: 0px;
+            margin-right: 0px;
+            background-image: url('../../Images/bg.jpg');
+            background-repeat: repeat-x;
+            height: 100%;
+        }
+
+
+        .modalPopup {
+            background-color: #eef8fc;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #d3e6ee;
+            padding: 3px;
+            width: 550px;
+        }
+
+        .pagestr {
+            width: 880px;
+            border: 1px solid black;
+            margin-top: 10px;
+            padding-left: 7px;
+            padding-right: 7px;
+        }
+
+        .leftColumn {
+            float: left;
+            width: 48%;
+            margin-left: 5px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .rightcolumn {
+            float: left;
+            width: 48%;
+            margin-left: 3px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .footerMessage {
+            margin-top: 5px;
+            text-align: center;
+            width: 100%;
+            height: 50px;
+            clear: both;
+        }
+
+        .footerText {
+            margin-top: 3px;
+            text-align: center;
+        }
+
+        .footerSeperator {
+            width: 80%;
+        }
+
+        .Selected {
+            background-color: #CCE3A9;
+            opacity: 0.5;
+        }
+
+        .hot-text-answer-option:hover {
+            background-color: #E1EAD1;
+            cursor: pointer;
+            opacity: 0.5;
+            padding-bottom: 5px;
+        }
+
+        .Selected img {
+            box-shadow: 10px 10px 5px gray;
+        }
+
+        .question-tooltip .Selected {
+            background-color: white;
+            opacity: 1;
+        }
+
+            .question-tooltip .Selected img {
+                opacity: 1;
+                box-shadow: 0px 0px 0px white;
+                padding-bottom: 5px;
+            }
+
+        .question-tooltip .hot-text-answer-option:hover {
+            background-color: white;
+            cursor: auto;
+            opacity: 1;
+        }
+
+        audio#audio_player {
+            padding: 5px;
+        }
+
+        .linkedQustIndex td:hover {
+            background-color: orange;
+            cursor: pointer;
+        }
+
+        .stt-btn {
+            height: 36px;
+            padding: 0 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #007bff;
+            background: #f8f9fa;
+            border: 1px solid #bdbdbd;
+            border-radius: 4px;
+            cursor: pointer;
+
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            text-transform: none;
+        }
+
+        .stt-btn:hover {
+            background: #eef4ff;
+        }
+
+        .stt-icon {
+            font-size: 14px;      
+            color: #007bff;       
+        }
+
+
+
+
+/* ===============================
+   STT MODAL CONTAINER
+================================ */
+.stt-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 560px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    z-index: 10000;
+    overflow: hidden;
+}
+
+/* ===============================
+   HEADER
+================================ */
+.stt-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid #ededed;
+}
+
+.stt-header h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #0b5c87;
+}
+
+.stt-header p {
+    margin: 6px 0 0;
+    font-size: 14px;
+    color: #666;
+}
+
+/* ===============================
+   WAVEFORM
+================================ */
+.stt-wave-container {
+    padding: 14px 22px 10px;
+}
+
+#sttWaveform {
+    width: 100%;
+    height: 58px;
+    background: #f3f3f3;
+    border-radius: 6px;
+    display: block;
+}
+
+/* ===============================
+   TEXTAREA
+================================ */
+#txtSTTBox {
+    width: calc(100% - 44px);
+    margin: 10px 22px 18px;
+    height: 150px;
+    padding: 12px 14px;
+    border-radius: 6px;
+    border: 1px solid #cfcfcf;
+    font-size: 15px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    resize: none;
+    box-sizing: border-box;
+    color: #333;
+}
+
+#txtSTTBox::placeholder {
+    color: #9e9e9e;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+.stt-footer {
+    background: #f7c948;
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+}
+
+/* ===============================
+   BUTTON BASE
+================================ */
+.btn {
+    flex: 1;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.18);
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+/* ===============================
+   BUTTON COLORS (MATCH GOAL)
+================================ */
+.btn.mic-on {
+    background: #f39c12;
+    color: #ffffff;
+}
+
+.btn.stop {
+    background: #6b7c85;
+    color: #ffffff;
+}
+
+.btn.save {
+    background: #7cb342;
+    color: #ffffff;
+}
+
+.btn.cancel {
+    background: #e5e5e5;
+    color: #333333;
+}
+
+/* ===============================
+   RESPONSIVE SAFETY
+================================ */
+@media (max-width: 640px) {
+    .stt-modal {
+        width: 95%;
+    }
+
+    .stt-footer {
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        flex: 1 1 48%;
+    }
+}
+
+
+    </style>
+    <script type="text/javascript">
+
+let pollyAudio = null;
+let isPlaying = false;
+
+let lastText = "";
+let lastVoice = "";
+let lastSpeed = "";
+let lastAudioData = "";
+
+let isProcessing = false;
+
+// ---------------------- UI ----------------------
+
+function showPollyLoader(text = "🔊 Loading audio...") {
+    document.getElementById("loaderText").textContent = text;
+    document.getElementById("pollyLoader").style.display = "block";
+}
+
+function hidePollyLoader() {
+    document.getElementById("pollyLoader").style.display = "none";
+}
+
+// ---------------------- BUTTON CLICK ----------------------
+
+function SetttsOn(buttontext) {
+
+    if (isProcessing) return;
+    isProcessing = true;
+    setTimeout(() => isProcessing = false, 300);
+
+    const voiceDropdown = document.getElementById("ctl00_ContentPlaceHolder1_ddlVoice");
+    const speedDropdown = document.getElementById("ctl00_ContentPlaceHolder1_ddlSpeed");
+    const hdnVoice = document.getElementById("ctl00_ContentPlaceHolder1_hdnttsVoice");
+    const hdnSpeed = document.getElementById("ctl00_ContentPlaceHolder1_hdnTtsSpeed");
+
+    const currentVoice = voiceDropdown ? voiceDropdown.value : "Joanna";
+    const currentSpeed = speedDropdown ? speedDropdown.value : "100";
+
+    if (hdnVoice) hdnVoice.value = currentVoice;
+    if (hdnSpeed) hdnSpeed.value = currentSpeed;
+
+    console.log("🎤 Voice:", currentVoice, "| ⚡ Speed:", currentSpeed);
+
+    // ✅ RESUME only if SAME voice & speed
+    if (
+        pollyAudio &&
+        pollyAudio.paused &&
+        !pollyAudio.ended &&
+        currentVoice === lastVoice &&
+        currentSpeed === lastSpeed
+    ) {
+        console.log("▶ Resuming audio");
+
+        pollyAudio.play()
+            .then(() => {
+                isPlaying = true;
+                showPollyLoader("Resuming...");
+                setTimeout(hidePollyLoader, 800);
+            })
+            .catch(err => {
+                console.error("Resume error:", err);
+                hidePollyLoader();
+            });
+
+        return;
+    }
+
+    // 🔄 Voice/Speed changed → FORCE restart
+    if (
+        pollyAudio &&
+        (currentVoice !== lastVoice || currentSpeed !== lastSpeed)
+    ) {
+        console.log("🔄 Voice/Speed changed → restarting");
+
+        try {
+            pollyAudio.pause();
+            pollyAudio.currentTime = 0;
+        } catch (e) {}
+
+        pollyAudio = null;
+        lastAudioData = "";
+    }
+
+    // ⏸ Pause if currently playing SAME config
+    if (pollyAudio && !pollyAudio.paused) {
+        console.log("⏸ Pausing audio");
+
+        pollyAudio.pause();
+        isPlaying = false;
+
+        showPollyLoader("Paused");
+        setTimeout(hidePollyLoader, 800);
+
+        return;
+    }
+
+    // 🔁 Trigger postback
+    showPollyLoader("🔊 Loading audio...");
+
+    document.getElementById('ctl00_ContentPlaceHolder1_hdntts').value = "1";
+    document.getElementById('ctl00_ContentPlaceHolder1_hdnbtnName').value = buttontext;
+
+    setTimeout(() => {
+        document.getElementById('ctl00_ContentPlaceHolder1_btnenablettsClick').click();
+    }, 50);
+}
+
+// ---------------------- PLAY AUDIO ----------------------
+
+function speakTextFromPolly(text) {
+
+    if (!text) {
+        hidePollyLoader();
+        return;
+    }
+
+    const trimmedText = text.trim().replace(/#Paused 1 sec#/gi, "<break time=\"1s\"/>");
+
+    const voice = document.getElementById("ctl00_ContentPlaceHolder1_hdnttsVoice").value || "Joanna";
+    const speed = document.getElementById("ctl00_ContentPlaceHolder1_hdnTtsSpeed").value || "100";
+
+    // ✅ Reuse cached audio
+    if (
+        trimmedText === lastText &&
+        voice === lastVoice &&
+        speed === lastSpeed &&
+        lastAudioData &&
+        pollyAudio
+    ) {
+        console.log("🔁 Replaying cached audio");
+
+        pollyAudio.currentTime = 0;
+        pollyAudio.play();
+
+        hidePollyLoader();
+        return;
+    }
+
+    console.log("🆕 Generating new audio");
+
+    if (pollyAudio) {
+        try {
+            pollyAudio.pause();
+            pollyAudio.currentTime = 0;
+        } catch (e) {}
+    }
+
+    lastText = trimmedText;
+    lastVoice = voice;
+    lastSpeed = speed;
+
+    showPollyLoader("Generating audio...");
+
+    const ssmlText = `<speak><prosody rate="${speed}%">${trimmedText}</prosody></speak>`;
+
+    fetch("LocalAssessmentOnlineTest.aspx/GetPollyAudio", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ text: ssmlText, voiceId: voice })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        const result = data.d;
+        console.log("📩 Polly response:", result);
+
+        if (typeof result === "string" &&
+            (result.startsWith("AWS Polly Error") ||
+             result.startsWith("Aggregate Error") ||
+             result.startsWith("General Error"))) {
+
+            console.error("❌ Polly Error:", result);
+            hidePollyLoader();
+            return;
+        }
+
+        lastAudioData = result;
+
+        pollyAudio = new Audio(result);
+
+        pollyAudio.oncanplaythrough = () => {
+            pollyAudio.play()
+                .then(() => {
+                    isPlaying = true;
+                    hidePollyLoader();
+                })
+                .catch(err => {
+                    console.error("Playback error:", err);
+                    hidePollyLoader();
+                });
+        };
+
+        pollyAudio.onended = () => {
+            console.log("✅ Audio finished");
+            isPlaying = false;
+        };
+
+        pollyAudio.load();
+    })
+    .catch(err => {
+        console.error("Fetch error:", err);
+        hidePollyLoader();
+    });
+}
+
+// ---------------------- HARD STOP ----------------------
+
+function hardStopPolly(reason = "") {
+
+    if (!pollyAudio) return;
+
+    console.log("🛑 Hard stop:", reason);
+
+    try {
+        pollyAudio.pause();
+        pollyAudio.src = "";
+        pollyAudio.load();
+    } catch (e) {}
+
+    pollyAudio = null;
+    isPlaying = false;
+
+    lastText = "";
+    lastAudioData = "";
+}
+
+    </script>
+    
+
+        <link href="../LocalAssessment/Scripts/Columnizer/reset.css" rel="stylesheet" type="text/css">
+
+        <script src="../LocalAssessment/Scripts/Columnizer/jquery-1.7.1.min.js" type="text/javascript"></script>
+
+        <script src="../LocalAssessment/Scripts/Columnizer/jquery.columnizer.js" type="text/javascript"></script>
+        <script src="https://cdn.jsdelivr.net/npm/fflate/umd/index.js"></script>
+
+        <script src="../../Scripts/br.js?v=55"></script>
+        <script src="../../Scripts/AWSMarshaller.js"></script>
+        
+
+        
+        
+        
+        
+        
+        <script src="../../Scripts/AudioStreamTranscriber.js?v=1"></script>
+         <script src="../../Scripts/transcribe.js"></script>
+      
+        
+        <script src="../../Scripts/AudioWaveFormVisualizer.js"></script>
+        
+        <script type="text/javascript" src="Javascript/CalculatorHighlighterStrikethrough.js"></script>
+        
+
+        <script type="text/javascript" src="Javascript/StraightEdge.js"></script>
+
+        <script type="text/javascript" src="Javascript/Timer.js"></script>
+
+        <script type="text/javascript">
+
+            const PCM_WORKLET_URL = '/EdInsight/Scripts/pcm-worklet-processor.js';
+
+            let postbackInitiated = false;
+
+
+            // for preventing methods under beforeunload event of the browser
+            function IspostbackInitiated() {
+                postbackInitiated = true;
+            }
+
+
+            function SaveAnswerOnBrowserClose() {
+                let userAgent = navigator.userAgent;
+                let async = true;
+                if (userAgent.match(/firefox|fxios/i)) {
+                    async = false;
+                }
+
+                var studentTestId = $('#ctl00_ContentPlaceHolder1_hdnstudentTestId').val();
+                var answerText = $('#ctl00_ContentPlaceHolder1_txtTextAnswer').val();
+                var currentQuestionIndex = $('#ctl00_ContentPlaceHolder1_HiddenFieldQuestionIndex').val();
+
+                var Data = JSON.stringify({ StudentTestId: studentTestId, AnswerText: answerText, CurrentQuestionIndex: currentQuestionIndex });
+
+                $.ajax({
+                    type: 'POST', dataType: 'json',
+                    data: Data,
+                    async: async,
+                    url: '/EdInsight/Form/OnlineTest/LocalAssessmentOnlineTest.as' + 'px/SaveAnswerOnBrowserClose',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        if (data.length == 1) {
+
+                        }
+                    }
+                });
+
+            }
+
+            function SaveAnswersLinkedQuestionOnBrowserClose() {
+
+                let userAgent = navigator.userAgent;
+                let async = true;
+                if (userAgent.match(/firefox|fxios/i)) {
+                    async = false;
+                }
+
+                var studentTestId = $('#ctl00_ContentPlaceHolder1_hdnstudentTestId').val();
+                var LinkedQuestionIndexesForOpenEndedQuestions = $('#ctl00_ContentPlaceHolder1_hdnLinkedQuestionIndexesForOpenEndedQuestions').val();
+                var answerText = [];
+
+                if (LinkedQuestionIndexesForOpenEndedQuestions != "") {
+                    var arrLinkedQuestionIndexes = LinkedQuestionIndexesForOpenEndedQuestions.split("-");
+                    
+                    arrLinkedQuestionIndexes.forEach(function (LinkedQuestionIndex)
+                    {
+                        if (LinkedQuestionIndex == "" || LinkedQuestionIndex == "0")
+                        {                            
+                            answerText.push($('#ctl00_ContentPlaceHolder1_txtTextAnswer').val());
+                        }
+                        else
+                        {
+                            var controlid= 'txtTextAnswer' + LinkedQuestionIndex;                            
+                            answerText.push($("textarea[id$='" + controlid + "']").val());
+                        }
+
+                    });
+                
+                }
+                var currentQuestionIndex = $('#ctl00_ContentPlaceHolder1_HiddenFieldQuestionIndex').val();
+                var Data = JSON.stringify({ StudentTestId: studentTestId, AnswerText: answerText, CurrentQuestionIndex: currentQuestionIndex });
+
+                    $.ajax({
+                        type: 'POST', dataType: 'json',
+                        data: Data,
+                        async: async,
+                        url: '/EdInsight/Form/OnlineTest/LocalAssessmentOnlineTest.as' + 'px/SaveAnswersLinkedQuestionOnBrowserClose',
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (data) {
+                            if (data.length == 1) {
+
+                            }
+                        }
+                    });
+
+               }
+
+            function updateTestEndDateTimeOnBrowserClose() {
+                var testLogId = $('#ctl00_ContentPlaceHolder1_hdnTestLogId').val();
+
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    data: JSON.stringify({ TestLogId: testLogId }),
+                    // async: async,
+                    url: '/EdInsight/Form/OnlineTest/LocalAssessmentOnlineTest.aspx/updateTestEndDateTimeOnBrowserClose',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        if (data.length === 1) {
+                            // Handle success case if needed
+                        }
+                    }
+                });
+            }
+
+            window.addEventListener('beforeunload', (event) => {
+                updateTestEndDateTimeOnBrowserClose();
+                if (!postbackInitiated) {
+                    var IsLinkedAndOpenEndedQuestion = $('#ctl00_ContentPlaceHolder1_hdnIsLinkedAndOpenEndedQuestion').val();
+                    if (IsLinkedAndOpenEndedQuestion == "1") {
+                        SaveAnswersLinkedQuestionOnBrowserClose();
+                    } else {
+                        var IsOpenEndedQuestion = $('#ctl00_ContentPlaceHolder1_hdnIsOpenEndedQuestion').val();
+                        if (IsOpenEndedQuestion) {
+                            SaveAnswerOnBrowserClose();
+                        }
+
+                    }
+                }
+            });
+
+            // Used to refresh the MathML equation while partial postback
+            function pageLoad() {
+                if (window.MathJax) {
+                    MathJax.Hub.Queue(
+                        ["Typeset", MathJax.Hub]
+                    );
+                }
+            }
+
+            function ClientCloseHandler(oWnd, args) {
+                //get the transferred arguments
+                var total = null;
+                var arg = args.get_argument();
+                if (arg) {
+                    total = arg.Total
+                }
+                // Split string so PostResponseStream does not try to encrypt query string part of url
+                if (total != null && total != "undefined") {
+                    if (activeTextbox != null && activeTextbox != 'undefined') {
+                        activeTextbox.value = total;
+                    }
+                    else {
+                        var input = document.getElementById('total1');
+                        if (input != null && input != "undefined")
+                            input.value = total;
+                    }
+                }
+            }
+            function SetActiveTextBox(id) {
+                activeTextbox = id;
+            }
+            var activeTextbox;
+
+            function SelectOne(rdo, gridName) {
+
+                /* Getting an array of all the "INPUT" controls on the form.*/
+                all = document.getElementsByTagName("input");
+                for (i = 0; i < all.length; i++) {
+                    //  if(all[i].type=="checkbox")/*Checking if it is a radio button*/
+                    if (all[i].type == "radio" && all[i].value == "rdoCorrectAnswer") {
+                        /*I have added '__ctl' ASP.NET adds '__ctl' to all 
+                        the controls of DataGrid.*/
+                        var count = all[i].id.indexOf(gridName + '__ctl');
+
+                        if (count = -1) {
+                            all[i].checked = false;
+                        }
+                    }
+                }
+                rdo.checked = true; /* Finally making the clicked radio button CHECKED */
+            }
+
+            // Shows DIV popup commands for gridview
+            function ShowPopup(lblQuestionText, panel) {
+                var link2 = document.getElementById(lblQuestionText);
+                var pnl = document.getElementById(panel);
+                pnl.style.display = "block";
+                if (link2 != null)
+                    link2.style.display = "block";
+
+            }
+
+            //Hides DIV popup commands for gridview
+            function HidePopup(lblQuestionText, panel) {
+                var divControl = $("[id$='" + panel + "']");
+
+                var isHide = 1; var timer;
+                timer = setTimeout(function () { isHide = 0; check(); }, 200);
+                divControl.mouseover(function () { clearTimeout(timer) });
+                divControl.mouseleave(function () { divControl.hide() });
+                function check() {
+                    if (isHide == 0) {
+                        divControl.hide();
+                    }
+                }
+            }
+
+
+            function SetScrollEvent() {
+                window.scrollTo(0, 0);
+            }
+            function VerifyUser() {
+                if (confirm('Questions with a red dot have not been answered. Do you want to finish the test now?')) {
+                    __doPostBack("FinishTest", "FinishTest");
+                }
+            }
+
+
+            var content_height = 740;	// the height of the content, discluding the header/footer
+            var page = 1;			// the beginning page number to show in the footer           
+
+            function HotTextToggle() {
+                $('.hot-text-answer-option').click(function () {
+                    $(this).toggleClass('Selected')
+
+                    var hdnHotTextOptions = $("[id$='hdnHotTextOptions']");
+                    if (hdnHotTextOptions.val().indexOf(this.id) == -1)
+                        hdnHotTextOptions.val(hdnHotTextOptions.val() + this.id + '||');
+                    else
+                        hdnHotTextOptions.val(hdnHotTextOptions.val().replace(this.id + '||', ''));
+                });
+            }
+            function PersistSelection() {
+                var hdnHotTextOptions = $("[id$='hdnHotTextOptions']");
+                if (hdnHotTextOptions.val()) {
+                    var selectedOptions = hdnHotTextOptions.val().split('||');
+                    $.each(selectedOptions, function (index, value) {
+                        $('span#' + value).addClass('Selected');
+
+                    });
+                }
+            }
+
+            function FinishOnlineTest() {
+                sessionStorage.removeItem("mins");
+                sessionStorage.removeItem("secs");
+                postbackInitiated = true;
+                __doPostBack('btnFinishTest', '');
+            }
+
+
+            $(document).ready(function () {
+
+                postbackInitiated = false;
+                // Defect #3834(Local Assessment - Online Test - Selecting a Radio Button and Pressing Enter Causes an Error)
+                // To prevent error while pressing "Enter" key in FITB boxes
+                $("input[class=textbox][placeholder='Answer here']").bind("keypress", (e) => {
+                    if (e.which === 13) {
+                        return false;
+                    }
+                });
+            });
+
+            function UploadFile(fileUpload) {
+                postbackInitiated = true;
+                var fileName = $(fileUpload).val();
+                if (!((fileName == undefined) || (fileName == ''))) {
+                    __doPostBack('QuestionListClick', 'UploadFile');
+                }
+            }
+
+            function DeleteFile(StudentTestId, QuestionId) {                
+                if (confirm('Are you sure, you really want to delete the file?')) {
+                    __doPostBack('QuestionListClick', 'DeleteFile' + '|' + StudentTestId + '|' + QuestionId);
+                }
+            }
+            function stopPollyAudio() {
+                if (typeof pollyAudio !== "undefined" && pollyAudio) {
+                    try {
+                        pollyAudio.pause();
+                        pollyAudio.currentTime = 0;
+                        pollyAudio = null;
+                        isPlaying = false;
+                        lastText = "";
+                    } catch (err) {
+                        console.warn("Error while stopping audio:", err);
+                    }
+                }
+            }
+        </script>
+
+        <script type="text/javascript" src="../../Scripts/jscolor.js"></script>
+
+        <script src="../../Scripts/graphics.js" type="text/javascript"></script>
+
+    
+
+    <script type="text/javascript">                      
+            function columnizeExhibit() {
+                if ($('#ExhibitText').length > 0) {
+                    var settings = JSON.parse($('#hdnExhibitSettings').val());
+                    var columns = settings['Columns'];
+                    if (columns == '2') {
+                        var isSeperator = settings['ColumnSeperator'];
+                        if (settings['ParagraphCount']) {
+                            $('#ExhibitText p').each(function (index) {
+                                $(this).prepend('<sup class="paragraphCount">[' + (index + 1) + ']</sup>');
+                            });
+                        }
+                        $('#ExhibitText').columnize({ columns: columns, seperator: isSeperator, buildOnce: true });
+                    }
+                }
+            }
+    </script>
+
+    <link href="../../CSS/loginCSS.css" rel="stylesheet" type="text/css">
+    <link href="../../CSS/NewStyle.css" rel="stylesheet" type="text/css">
+
+    <style>
+        .RadWindow .rwTitleWrapper {
+            color: #000 !important;
+        }
+    </style>
+    
+<script type="text/javascript">
+
+    console.log("📌 STT Script Loaded");
+
+    let lastFocusedInput = null;
+    let sttTargetElement = null;
+    let isSTTRunning = false;
+    let isTTSActive = false;
+     function bindSTTButton() {
+        const btn = document.getElementById('ctl00_ContentPlaceHolder1_btnSpeechToText');
+        if (!btn) return;
+
+        btn.onclick = function () {
+            hardStopPolly("STT button clicked");
+            if (!lastFocusedInput) {
+                alert("⚠ Please click inside a text field first.");
+                return;
+            }
+
+            sttTargetElement = lastFocusedInput;
+            console.log("🎯 STT target locked:", sttTargetElement.id);
+
+            openSTTModal();   // ✅ DIRECT CALL — NO RETRY
+        };
+    }
+
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("🌍 DOM Loaded — Binding events...");
+        bindUniversalFocus();
+        bindSTTButton();
+    });
+    window.waveform = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const canvas = document.getElementById("sttWaveform");
+        if (canvas) {
+            window.waveform = new AudioWaveFormVisualizer(canvas);
+        }
+    });
+
+
+    Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function () {
+        console.log("🔁 UpdatePanel refreshed");
+
+
+        // --- Clear Polly safely after partial postback ---
+        //if (pollyAudio && !pollyAudio.paused) {
+        //    try {
+        //        pollyAudio.pause();
+        //        isPausedByUser = true;
+        //        isPlaying = false;
+
+        //        console.log(
+        //            "⏸ Polly paused due to UpdatePanel at",
+        //            pollyAudio.currentTime.toFixed(2),
+        //            "seconds"
+        //        );
+        //    } catch (e) {
+        //        console.warn("Polly pause failed:", e);
+        //    }
+        //}
+        if (pollyAudio && !pollyAudio.paused) {
+            hardStopPolly("UpdatePanel refresh");
+        }
+        // --- Rebind JS handlers ---
+        bindUniversalFocus();
+        bindSTTButton();
+
+    });
+
+
+
+    function getSTTModal() {
+        const modals = document.querySelectorAll("#sttModal");
+
+        // ✅ Remove duplicates if any
+        if (modals.length > 1) {
+            console.warn("⚠ Duplicate STT modals detected, removing extras");
+            for (let i = 1; i < modals.length; i++) {
+                modals[i].remove();
+            }
+        }
+
+        return document.getElementById("sttModal");
+    }
+
+    function getSTTBox() {
+        const modal = getSTTModal();
+        if (!modal) return null;
+        return modal.querySelector('textarea');
+    }
+
+    function openSTTModal() {
+        console.log("📌 Opening STT Modal");
+        isTTSActive = false;
+        isPausedByUser = false;
+        const modal = getSTTModal();
+        if (!modal) {
+            console.error("❌ STT modal not found");
+            return;
+        }
+
+        // Escape layout restrictions
+        document.body.appendChild(modal);
+
+        modal.style.display = "block";
+        modal.style.position = "fixed";
+        modal.style.zIndex = "2147483647";
+        modal.style.top = "50%";
+        modal.style.left = "50%";
+        modal.style.transform = "translate(-50%, -50%)";
+
+        const box = modal.querySelector("textarea");
+        if (box) {
+            box.value = "";          // ✅ CLEAR PREVIOUS TEXT
+            box.focus();             // optional UX improvement
+        }
+    }
+
+
+
+
+
+    function closeSTTModal() {
+        console.log("❌ Closing STT Modal");
+
+        // 1️⃣ Ensure STT is stopped
+        stopSTT();
+
+        // 2️⃣ Hide modal
+        const modal = getSTTModal();
+        if (modal) {
+            modal.style.display = "none";
+        }
+
+        // 3️⃣ Reset STT state
+        sttTargetElement = null;
+
+        // 4️⃣ Restore focus → CRITICAL for validation
+        setTimeout(() => {
+            if (lastFocusedInput) {
+                lastFocusedInput.focus();
+                lastFocusedInput.dispatchEvent(new Event("blur", { bubbles: true }));
+            }
+        }, 0);
+    }
+
+
+    function startSTT() {
+        console.log("🎙 Starting STT");
+        if (isSTTRunning) {
+            console.warn("⚠ STT already running");
+            return;
+        }
+
+        isSTTRunning = true;
+        const micStatus = document.getElementById("micStatusText");
+        ensureWaveform();
+        startStreaming();
+    }
+
+    function stopSTT() {
+        if (!isSTTRunning) return;
+
+        console.log("🛑 Stopping STT");
+
+        stopStreaming(); // audio + websocket cleanup
+
+        const micStatus = document.getElementById("micStatusText");
+        if (micStatus) {
+            micStatus.innerText = "Microphone is off";
+        }
+
+        // reset flags ONLY
+        isSTTRunning = false;
+        sttArmed = false;
+    }
+
+
+
+
+    function insertSTTText() {
+        const box = getSTTBox();
+        if (!box) return;
+
+        const txt = box.value.trim();
+
+        if (!sttTargetElement) {
+            alert("⚠ No target textbox selected.");
+            return;
+        }
+
+        console.log("➡ Saving STT text into:", sttTargetElement.id);
+
+        sttTargetElement.value =
+            sttTargetElement.value
+                ? sttTargetElement.value + " " + txt
+                : txt;
+
+        closeSTTModal();
+    }
+
+
+
+
+    function bindUniversalFocus() {
+        document.body.addEventListener("focusin", function (e) {
+            const el = e.target;
+
+            // 🚫 Ignore STT modal or TTS buttons
+            const modal = getSTTModal();
+            if (modal && modal.contains(el)) return;
+
+            // 🚫 Ignore hidden or invisible elements
+            if (el.offsetParent === null) return;
+
+            // ✅ Accept ONLY real typable fields
+            const isTypable =
+                (el.tagName === "INPUT" &&
+                    !el.readOnly &&
+                    !el.disabled &&
+                    el.type !== "button" &&
+                    el.type !== "submit" &&
+                    el.type !== "image" &&
+                    el.type !== "hidden") ||
+                el.tagName === "TEXTAREA" ||
+                el.isContentEditable === true;
+
+            if (!isTypable) return;
+            //if (isTTSActive) {
+            //    console.log("🚫 Ignoring focus due to active TTS:", el.id);
+            //    return;
+            //}
+            // 🔒 Save as last focused input
+            lastFocusedInput = el;
+
+            // 🔒 Only set sttTargetElement if not already locked by STT
+            if (!sttTargetElement) {
+                sttTargetElement = el;
+            }
+
+            console.log("✏ STT Focus set:", el.id);
+        }, true);
+    }
+
+    function ensureWaveform() {
+        const canvas = document.getElementById("sttWaveform");
+        if (!canvas) return null;
+
+        if (!window.waveform || window.waveform.canvas !== canvas) {
+            window.waveform = new AudioWaveFormVisualizer(canvas);
+            console.log("🎧 Waveform reinitialized");
+        }
+
+        return window.waveform;
+    }
+
+
+
+
+
+    function resetSTTTarget() {
+        console.log("🔄 Resetting STT target due to question change");
+        lastFocusedInput = null;
+    }
+</script>
+
+
+
+       
+    <div id="ctl00_ContentPlaceHolder1_RadWindowManager1" style="display:none;">
+	<div id="ctl00_ContentPlaceHolder1_rwCalculator" style="display:none;">
+		<div id="ctl00_ContentPlaceHolder1_rwCalculator_C" style="display:none;">
+
+		</div><input id="ctl00_ContentPlaceHolder1_rwCalculator_ClientState" name="ctl00_ContentPlaceHolder1_rwCalculator_ClientState" type="hidden" autocomplete="off">
+	</div><div id="ctl00_ContentPlaceHolder1_RadWindowManager1_alerttemplate" style="display:none;">
+		<div class="rwDialog rwAlertDialog">
+			<div class="rwDialogContent">
+				<div class="rwDialogMessage">{1}</div>
+			</div>
+			<div class="rwDialogButtons">
+				<button type="button" class="rwOkBtn" onclick="$find('{0}').close(true); return false;">##LOC[OK]##</button>
+			</div>
+		</div>
+		</div><div id="ctl00_ContentPlaceHolder1_RadWindowManager1_prompttemplate" style="display:none;">
+		<div class="rwDialog rwPromptDialog">
+			<div class="rwDialogContent">
+				<div class="rwDialogMessage">{1}</div>
+				<div class="rwPromptInputContainer">
+					<script type="text/javascript">
+						function RadWindowprompt_detectenter(id, ev, input) {
+							if (!ev) ev = window.event;
+							if (ev.keyCode == 13) {
+								var but = input.parentNode.parentNode.parentNode.getElementsByTagName("button")[0];
+								if (but) {
+									if (but.click) {
+										but.click();
+									}
+									else if (but.onclick) {
+										but.focus();
+										var click = but.onclick;
+										but.onclick = null;
+										if (click) click.call(but);
+									}
+								}
+								return false;
+							}
+							else return true;
+						}
+					</script>
+					<input title="Enter Value" onkeydown="return RadWindowprompt_detectenter('{0}', event, this);" type="text" class="rwPromptInput radPreventDecorate" value="{2}">
+				</div>
+			</div>
+			<div class="rwDialogButtons">
+				<button type="button" class="rwOkBtn" onclick="$find('{0}').close(this.parentNode.parentNode.getElementsByTagName('input')[0].value); return false;">##LOC[OK]##</button>
+				<button type="button" class="rwCancelBtn" onclick="$find('{0}').close(null); return false;">##LOC[Cancel]##</button>
+			</div>
+		</div>
+		</div><div id="ctl00_ContentPlaceHolder1_RadWindowManager1_confirmtemplate" style="display:none;">
+		<div class="rwDialog rwConfirmDialog">
+			<div class="rwDialogContent">
+				<div class="rwDialogMessage">{1}</div>
+			</div>
+			<div class="rwDialogButtons">
+				<button type="button" class="rwOkBtn" onclick="$find('{0}').close(true); return false;">##LOC[OK]##</button>
+				<button type="button" class="rwCancelBtn" onclick="$find('{0}').close(false); return false;">##LOC[Cancel]##</button>
+			</div>
+		</div>
+		</div><input id="ctl00_ContentPlaceHolder1_RadWindowManager1_ClientState" name="ctl00_ContentPlaceHolder1_RadWindowManager1_ClientState" type="hidden">
+</div>
+    <input type="hidden" name="ctl00$ContentPlaceHolder1$hdnExhibitSettings" id="ctl00_ContentPlaceHolder1_hdnExhibitSettings">
+    <input type="hidden" name="ctl00$ContentPlaceHolder1$hdnimgtextheightTooltip" id="ctl00_ContentPlaceHolder1_hdnimgtextheightTooltip" value="1">
+     <input type="hidden" name="ctl00$ContentPlaceHolder1$hdnstudentTestId" id="ctl00_ContentPlaceHolder1_hdnstudentTestId" value="Dezb7sMtSkHF/2xmkYjyig==">
+    <input type="hidden" name="ctl00$ContentPlaceHolder1$hdnVirtualDir" id="ctl00_ContentPlaceHolder1_hdnVirtualDir">
+    <input type="hidden" name="ctl00$ContentPlaceHolder1$hdnAdministrationId" id="ctl00_ContentPlaceHolder1_hdnAdministrationId" value="-1">
+    <input type="hidden" name="ctl00$ContentPlaceHolder1$hdnLoginCode" id="ctl00_ContentPlaceHolder1_hdnLoginCode">
+    <input type="hidden" name="ctl00$ContentPlaceHolder1$hdnTestLogId" id="ctl00_ContentPlaceHolder1_hdnTestLogId">
+    <input type="hidden" name="ctl00$ContentPlaceHolder1$hdntts" id="ctl00_ContentPlaceHolder1_hdntts" value="0"> 
+    <input type="hidden" name="ctl00$ContentPlaceHolder1$hdnbtnName" id="ctl00_ContentPlaceHolder1_hdnbtnName"> 
+    <input name="ctl00$ContentPlaceHolder1$hdnTtsSpeed" type="hidden" id="ctl00_ContentPlaceHolder1_hdnTtsSpeed">
+    <input name="ctl00$ContentPlaceHolder1$hdnttsVoice" type="hidden" id="ctl00_ContentPlaceHolder1_hdnttsVoice">
+    <div id="pollyLoader" style="display: none; position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); z-index: 9999; background-color: rgba(255,255,255,0.9);
+    padding: 15px 25px; border-radius: 8px; font-weight: bold; font-size: 14px; box-shadow: 0 0 10px #999;">
+    <span id="loaderText">🔊 Loading audio...</span>
+</div>
+
+    <div class="page_template">
+        <div class="content">
+        </div>
+        <div class="footer">
+            <hr>
+            <span>Page: </span>
+            <div>
+                Continued on next page.
+            </div>
+        </div>
+    </div>
+    <table cellpadding="0" cellspacing="0" width="99%" style="height: 100%;" align="center">
+        <tbody><tr>
+            <td>
+                <table cellpadding="0" cellspacing="0" width="100%">
+                    <tbody><tr>
+                        <td style="width: 18px; height: 103px">
+                            <img src="assets/side-left.svg" style="width: 18px; height: 103px">
+                        </td>
+                        <td valign="bottom">
+                            <table cellpadding="0" cellspacing="0" style="height: 96px; background-image: url('assets/logo.svg'); background-repeat: no-repeat; background-position: left bottom; background-color: #76d0ed" width="100%">
+                                <tbody><tr>
+                                    <td>&nbsp;
+                                    </td>
+                                    <td align="right" valign="bottom"></td>
+                                </tr>
+                            </tbody></table>
+                        </td>
+                        <td style="width: 18px; height: 103px">
+                            <img src="assets/side-right.svg" style="width: 18px; height: 103px">
+                        </td>
+                    </tr>
+                </tbody></table>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-left: 8px; padding-right: 5px; height: 100%;">
+                <table cellpadding="0" cellspacing="0" width="100%" style="height: 100%;">
+                    <tbody><tr>
+                        <td style="background-color: #f7fcfe; vertical-align: top; padding: 10px;" id="tdHead">
+                            <table width="100%">
+                                <tbody><tr>
+                                    <td class="blueheading">
+                                        <b>
+                                            Student Name: Test Student</b>
+                                    </td>
+                                    <td>
+                                        <b>
+                                            Assessment Name: MR 6676</b>
+                                    </td>
+                                    <td>
+                                        <b>
+                                            Administration Name: Online Test Preview</b>
+                                    </td>
+                                    <td id="ctl00_ContentPlaceHolder1_tdTimeDisplay" align="right" style="display:none;">
+                                        <div style="float: right">
+                                            <img id="ctl00_ContentPlaceHolder1_imgClock" src="assets/clock.svg" style="height:20px;width:20px;border-width:0px;">
+                                            <span id="ctl00_ContentPlaceHolder1_lblTimeStatus" style="font-weight: 700"></span>
+                                        </div>
+                                    </td>
+
+                                </tr>
+                            </tbody></table>
+                            <br>
+                            <div id="ctl00_ContentPlaceHolder1_updatePanelStudentTest" style="display: block;">
+	
+                                        <input type="hidden" name="ctl00$ContentPlaceHolder1$LoadTesterQuestionCountMinus1" id="ctl00_ContentPlaceHolder1_LoadTesterQuestionCountMinus1" value="5">
+                                        <input type="hidden" name="ctl00$ContentPlaceHolder1$HiddenFieldQuestionIndex" id="ctl00_ContentPlaceHolder1_HiddenFieldQuestionIndex" value="0">
+                                        <input type="hidden" name="ctl00$ContentPlaceHolder1$HiddenTimeField" id="ctl00_ContentPlaceHolder1_HiddenTimeField" value="0">
+                                         <input type="hidden" name="ctl00$ContentPlaceHolder1$hdnHotTextOptions" id="ctl00_ContentPlaceHolder1_hdnHotTextOptions">
+                                    <input type="hidden" name="ctl00$ContentPlaceHolder1$hdnLinkedQuestionIndexesForOpenEndedQuestions" id="ctl00_ContentPlaceHolder1_hdnLinkedQuestionIndexesForOpenEndedQuestions">
+                                    <input type="hidden" name="ctl00$ContentPlaceHolder1$hdnIsLinkedAndOpenEndedQuestion" id="ctl00_ContentPlaceHolder1_hdnIsLinkedAndOpenEndedQuestion">
+                                  <input type="hidden" name="ctl00$ContentPlaceHolder1$hdnIsOpenEndedQuestion" id="ctl00_ContentPlaceHolder1_hdnIsOpenEndedQuestion">
+
+                                        <div style="display: none">
+                                            <input name="ctl00$ContentPlaceHolder1$HiddenTimeSecondField" type="text" id="ctl00_ContentPlaceHolder1_HiddenTimeSecondField">
+                                        </div>
+                                        <table width="100%">
+                                            <tbody><tr>
+                                                <td valign="top" style="width: 200px;" rowspan="2">
+                                                    <table class="bluetable" style="width: 200px; height: 400px;">
+                                                        <tbody><tr>
+                                                            <td align="left" valign="top">
+                                                                <table class="leftlink" cellspacing="0" border="0" id="grdQuestionStatus" style="border-collapse: collapse;">
+                                                                    <tbody><tr id="grdQuestionStatus0">
+<td>
+<table class="style3">
+<tbody><tr>
+<td class="style4">
+<img src="assets/yellowdot.svg">
+</td>
+<td align="left" style="font-family: Arial; font-size: 12pt;">
+<a href="javascript:;" ontouchstart="stopPollyAudio();__doPostBack('QuestionListClick','0','1')" onclick="stopPollyAudio();__doPostBack('QuestionListClick','0')" style="cursor:pointer" onmouseover="javascript:ShowPopup('Question0span','Question0div')" onmouseout="javascript:HidePopup('Question0span','Question0div')">
+Question  1 </a>
+</td>
+<td>
+<div class="question-tooltip" id="Question0div" style="display: none; padding: 5px; border: 1px solid #6cd1fb;z-index: 101; position: absolute; height: auto; width: auto; background-color: white;color: black; font-weight: bold; font-size: 12px;">
+<span id="Question0span">
+
+</span>
+</div>
+</td>
+</tr>
+</tbody></table>
+</td></tr>
+<tr id="grdQuestionStatus1">
+<td>
+<table class="style3">
+<tbody><tr>
+<td class="style4">
+<img src="assets/yellowdot.svg">
+</td>
+<td align="left" style="font-family: Arial; font-size: 12pt;">
+<a href="javascript:;" ontouchstart="stopPollyAudio();__doPostBack('QuestionListClick','1','2')" onclick="stopPollyAudio();__doPostBack('QuestionListClick','1')" style="cursor:pointer" onmouseover="javascript:ShowPopup('Question1span','Question1div')" onmouseout="javascript:HidePopup('Question1span','Question1div')">
+Question  2 </a>
+</td>
+<td>
+<div class="question-tooltip" id="Question1div" style="display: none; padding: 5px; border: 1px solid #6cd1fb;z-index: 101; position: absolute; height: auto; width: auto; background-color: white;color: black; font-weight: bold; font-size: 12px;">
+<span id="Question1span">
+
+</span>
+</div>
+</td>
+</tr>
+</tbody></table>
+</td></tr>
+<tr id="grdQuestionStatus2">
+<td>
+<table class="style3">
+<tbody><tr>
+<td class="style4">
+<img src="assets/yellowdot.svg">
+</td>
+<td align="left" style="font-family: Arial; font-size: 12pt;">
+<a href="javascript:;" ontouchstart="stopPollyAudio();__doPostBack('QuestionListClick','2','3')" onclick="stopPollyAudio();__doPostBack('QuestionListClick','2')" style="cursor:pointer" onmouseover="javascript:ShowPopup('Question2span','Question2div')" onmouseout="javascript:HidePopup('Question2span','Question2div')">
+Question  3 </a>
+</td>
+<td>
+<div class="question-tooltip" id="Question2div" style="display: none; padding: 5px; border: 1px solid #6cd1fb;z-index: 101; position: absolute; height: auto; width: auto; background-color: white;color: black; font-weight: bold; font-size: 12px;">
+<span id="Question2span">
+
+</span>
+</div>
+</td>
+</tr>
+</tbody></table>
+</td></tr>
+<tr id="grdQuestionStatus3">
+<td>
+<table class="style3">
+<tbody><tr>
+<td class="style4">
+<img src="assets/yellowdot.svg">
+</td>
+<td align="left" style="font-family: Arial; font-size: 12pt;">
+<a href="javascript:;" ontouchstart="stopPollyAudio();__doPostBack('QuestionListClick','3','4')" onclick="stopPollyAudio();__doPostBack('QuestionListClick','3')" style="cursor:pointer" onmouseover="javascript:ShowPopup('Question3span','Question3div')" onmouseout="javascript:HidePopup('Question3span','Question3div')">
+Question  4 </a>
+</td>
+<td>
+<div class="question-tooltip" id="Question3div" style="display: none; padding: 5px; border: 1px solid #6cd1fb;z-index: 101; position: absolute; height: auto; width: auto; background-color: white;color: black; font-weight: bold; font-size: 12px;">
+<span id="Question3span">
+
+</span>
+</div>
+</td>
+</tr>
+</tbody></table>
+</td></tr>
+<tr id="grdQuestionStatus4">
+<td>
+<table class="style3">
+<tbody><tr>
+<td class="style4">
+<img src="assets/yellowdot.svg">
+</td>
+<td align="left" style="font-family: Arial; font-size: 12pt;">
+<a href="javascript:;" ontouchstart="stopPollyAudio();__doPostBack('QuestionListClick','4','5')" onclick="stopPollyAudio();__doPostBack('QuestionListClick','4')" style="cursor:pointer" onmouseover="javascript:ShowPopup('Question4span','Question4div')" onmouseout="javascript:HidePopup('Question4span','Question4div')">
+Question  5 </a>
+</td>
+<td>
+<div class="question-tooltip" id="Question4div" style="display: none; padding: 5px; border: 1px solid #6cd1fb;z-index: 101; position: absolute; height: auto; width: auto; background-color: white;color: black; font-weight: bold; font-size: 12px;">
+<span id="Question4span">
+
+</span>
+</div>
+</td>
+</tr>
+</tbody></table>
+</td></tr>
+<tr id="grdQuestionStatus5">
+<td>
+<table class="style3">
+<tbody><tr>
+<td class="style4">
+<img src="assets/yellowdot.svg">
+</td>
+<td align="left" style="font-family: Arial; font-size: 12pt;">
+<a href="javascript:;" ontouchstart="stopPollyAudio();__doPostBack('QuestionListClick','5','6')" onclick="stopPollyAudio();__doPostBack('QuestionListClick','5')" style="cursor:pointer" onmouseover="javascript:ShowPopup('Question5span','Question5div')" onmouseout="javascript:HidePopup('Question5span','Question5div')">
+Question  6 </a>
+</td>
+<td>
+<div class="question-tooltip" id="Question5div" style="display: none; padding: 5px; border: 1px solid #6cd1fb;z-index: 101; position: absolute; height: auto; width: auto; background-color: white;color: black; font-weight: bold; font-size: 12px;">
+<span id="Question5span">
+
+</span>
+</div>
+</td>
+</tr>
+</tbody></table>
+</td></tr>
+
+                                                                </tbody></table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody></table>
+                                                </td>
+                                                <td align="left" valign="top" class="lightbluetable" style="padding-left: 10px;">
+                                                    <table cellpadding="0" cellspacing="0">
+                                                        <tbody><tr>
+                                                            <td id="tdenabletts"> 
+
+                                                                <div style="margin: 10px;"> 
+
+                                                                     
+
+                                                                </div> 
+
+                                                                <input type="submit" name="ctl00$ContentPlaceHolder1$btnenablettsClick" value="exhibits" id="ctl00_ContentPlaceHolder1_btnenablettsClick" style="display:none;"> 
+
+                                                            </td> 
+                                                            <td>
+                                                                
+ 
+
+
+
+                                                            </td>
+                                                            <td>
+                                                               
+
+                                                            </td>
+                                                            <td id="tdTextIncrease">
+                                                                <div style="margin: 10px;">
+                                                                    <input type="image" name="ctl00$ContentPlaceHolder1$imgtextheight" id="ctl00_ContentPlaceHolder1_imgtextheight" title="Text Increase" src="assets/textheight.svg" onclick="SetSource(); return false;" style="border-width:0px;cursor: pointer;height:30px;width:30px">
+                                                                </div>
+                                                            </td>
+                                                            <td id="ctl00_ContentPlaceHolder1_tdCalc">
+                                                                <div style="margin: 10px;">
+                                                                    <img src="assets/calculator.svg" id="ctl00_ContentPlaceHolder1_imgCalc" onclick="return ShowCalculator('Simple');" title="Calculator Tool" style="cursor: pointer">
+                                                                </div>
+                                                            </td>
+	
+                                                            <td id="ctl00_ContentPlaceHolder1_tdHighlight" valign="top">
+                                                                <div>
+                                                                    <div style="margin: 10px; float: left">
+                                                                        <img alt="" src="assets/highlight.svg" onclick="Highlight();" style="cursor: pointer" title="Highlight - select text first then click this icon">
+                                                                    </div>
+                                                                    <div style="margin-top: 10px; float: left">
+                                                                        <select name="ctl00$ContentPlaceHolder1$ddlColor" id="ctl00_ContentPlaceHolder1_ddlColor" style="width:134px;">
+		<option value="#FCFF9E">Yellow</option>
+		<option value="#FFFFFF">White</option>
+		<option value="#A1FFFF">Light Blue</option>
+		<option value="#66FF66">Light Green</option>
+		<option value="#FF99FF">Light Pink</option>
+		<option value="#FFCC66">Light Orange</option>
+
+	</select>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+	
+                                                            <td id="ctl00_ContentPlaceHolder1_tdStraightEdge" valign="top">
+                                                                <div>
+                                                                    <div style="margin: 10px; float: left">
+                                                                        <img alt="" src="assets/straightedge.svg" name="straightEdge" style="cursor: pointer" onclick="ToggleIcon();" title="Straight-edge mode is off">
+                                                                    </div>
+                                                                    <div style="margin-top: 10px; float: left">
+                                                                        <select name="ctl00$ContentPlaceHolder1$ddlThickness" id="ctl00_ContentPlaceHolder1_ddlThickness" style="width:50px;">
+		<option value="1">1</option>
+		<option value="2">2</option>
+		<option value="3">3</option>
+
+	</select>
+                                                                    </div>
+                                                                </div>
+                                                                <div id="line">
+                                                                </div>
+                                                            </td>
+	
+                                                             
+
+                                                        </tr>
+                                                    </tbody></table>
+                                                    <table style="height: 40px;" width="100%">
+                                                        <tbody><tr>
+                                                            <td align="left">
+                                                                <table style="width: 100%; margin-bottom: 8px;" class="gridtable" cellspacing="0">
+                                                                    <tbody><tr>
+                                                                        <td>
+                                                                            
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody></table>
+                                                            </td>
+                                                        </tr>
+                                                        
+                                                        
+                                                        <tr>
+                                                            <td align="left" class="lightbluetable">
+                                                                <table style="height: 40px;" width="100%">
+                                                                    <tbody><tr style="color: Black; background-color: White">
+                                                                        <td id="ctl00_ContentPlaceHolder1_tdenablettsquestion" style="padding:0; margin:0; width:1%; vertical-align:middle;">
+                                                                            <div style="padding: 0; margin: 0;"> 
+                                                                                <input type="image" name="ctl00$ContentPlaceHolder1$Imagettsquestion" id="ctl00_ContentPlaceHolder1_Imagettsquestion" title="Text-to-Speech Enabled" src="assets/tts.svg" onclick="SetttsOn('question');  return false;" style="border-width:0px;cursor: pointer; height:30px; width:30px;"> 
+
+                                                                            </div> 
+                                                                            <input type="submit" name="ctl00$ContentPlaceHolder1$btnttsquestion" value="question" id="ctl00_ContentPlaceHolder1_btnttsquestion" style="display:none;"> 
+                                                                        </td>
+	 
+                                                                        <td id="ctl00_ContentPlaceHolder1_tdQuestionNumber" style="width: 0px;font-family: Arial; font-size: 12pt;" valign="top"></td>
+	
+                                                                        <td id="ctl00_ContentPlaceHolder1_tdQuestion" valign="top" style="font-family: Arial; font-size: 12pt;padding-top:5px;" align="left"><p>Question 1 (#16104843)</p><p></p></td>
+	
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td id="ctl00_ContentPlaceHolder1_tdQuestionCheckPick" colspan="2" style="background-color: white; padding-left: 25px;  color: black;"><span style="font-size:12pt;font-family: Arial">Select all answers that apply</span></td>
+	
+                                                                    </tr>
+                                                                </tbody></table>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td align="left" style="padding-left: 10px; background-color: White; color: Black;" valign="top" class="lightbluetable">
+                                                                <table width="100%">
+                                                                    <tbody><tr>
+                                                                        <td align="left" valign="top">
+                                                                            <div id="ctl00_ContentPlaceHolder1_divMultChoiceAnswer" style="display:inline">
+                                                                                <table cellspacing="5">
+                                                                                    <tbody><tr>
+<td width="50px" style="vertical-align: top">
+<img alt="" src="assets/strikethrough.svg" id="imgStrike" style="cursor:pointer;" title="Exclude/include test answer" onclick="StrikeThroughText('tdA');">
+</td>
+<td width="20px" style="vertical-align: top">
+<input type="checkbox" name="rdoAnswerChoice" onkeypress="return false;" value="855625" id="rdo855625">
+</td>
+<td style="width:20px;vertical-align:top;border-right:1px dotted black" id="tdA">
+<label for="rdo855625" style="color:black;font-family: Arial; font-size: 12pt;">  A  </label>
+</td>
+<td style="width:800px;;font-family: Arial; font-size: 12pt;" id="tdQuestionText65">
+<label for="rdo855625" style="color:black">
+<span style="Times New Roman&quot;;">3 feet, 4 feet, and 5 feet</span>
+</label></td>
+</tr>
+<tr><td colspan="4"><hr></td></tr>
+<tr>
+<td width="50px" style="vertical-align: top">
+<img alt="" src="assets/strikethrough.svg" id="imgStrike" style="cursor:pointer;" title="Exclude/include test answer" onclick="StrikeThroughText('tdB');">
+</td>
+<td width="20px" style="vertical-align: top">
+<input type="checkbox" name="rdoAnswerChoice" onkeypress="return false;" value="855626" id="rdo855626">
+</td>
+<td style="width:20px;vertical-align:top;border-right:1px dotted black" id="tdB">
+<label for="rdo855626" style="color:black;font-family: Arial; font-size: 12pt;">  B  </label>
+</td>
+<td style="width:800px;;font-family: Arial; font-size: 12pt;" id="tdQuestionText66">
+<label for="rdo855626" style="color:black">
+<span style="Times New Roman&quot;;">1 meter, 7 meters, and 10 meters</span>
+</label></td>
+</tr>
+<tr><td colspan="4"><hr></td></tr>
+<tr>
+<td width="50px" style="vertical-align: top">
+<img alt="" src="assets/strikethrough.svg" id="imgStrike" style="cursor:pointer;" title="Exclude/include test answer" onclick="StrikeThroughText('tdC');">
+</td>
+<td width="20px" style="vertical-align: top">
+<input type="checkbox" name="rdoAnswerChoice" onkeypress="return false;" value="855627" id="rdo855627">
+</td>
+<td style="width:20px;vertical-align:top;border-right:1px dotted black" id="tdC">
+<label for="rdo855627" style="color:black;font-family: Arial; font-size: 12pt;">  C  </label>
+</td>
+<td style="width:800px;;font-family: Arial; font-size: 12pt;" id="tdQuestionText67">
+<label for="rdo855627" style="color:black">
+<span style="Times New Roman&quot;;">1.5 inches, 1.5 inches, and 2.5 inches</span>
+</label></td>
+</tr>
+<tr><td colspan="4"><hr></td></tr>
+<tr>
+<td width="50px" style="vertical-align: top">
+<img alt="" src="assets/strikethrough.svg" id="imgStrike" style="cursor:pointer;" title="Exclude/include test answer" onclick="StrikeThroughText('tdD');">
+</td>
+<td width="20px" style="vertical-align: top">
+<input type="checkbox" name="rdoAnswerChoice" onkeypress="return false;" value="855628" id="rdo855628">
+</td>
+<td style="width:20px;vertical-align:top;border-right:1px dotted black" id="tdD">
+<label for="rdo855628" style="color:black;font-family: Arial; font-size: 12pt;">  D  </label>
+</td>
+<td style="width:800px;;font-family: Arial; font-size: 12pt;" id="tdQuestionText68">
+<label for="rdo855628" style="color:black">
+<span style="Times New Roman&quot;;">7 centimeters, 7 centimeters, and 7 centimeters</span>
+</label></td>
+</tr>
+<tr><td colspan="4"><hr></td></tr>
+<tr>
+<td width="50px" style="vertical-align: top">
+<img alt="" src="assets/strikethrough.svg" id="imgStrike" style="cursor:pointer;" title="Exclude/include test answer" onclick="StrikeThroughText('tdE');">
+</td>
+<td width="20px" style="vertical-align: top">
+<input type="checkbox" name="rdoAnswerChoice" onkeypress="return false;" value="855629" id="rdo855629">
+</td>
+<td style="width:20px;vertical-align:top;border-right:1px dotted black" id="tdE">
+<label for="rdo855629" style="color:black;font-family: Arial; font-size: 12pt;">  E  </label>
+</td>
+<td style="width:800px;;font-family: Arial; font-size: 12pt;" id="tdQuestionText69">
+<label for="rdo855629" style="color:black">
+<span style="Times New Roman&quot;;">6 miles, 6 miles, and 12 miles</span>
+</label></td>
+</tr>
+<tr><td colspan="4"><hr></td></tr>
+
+                                                                                </tbody></table>
+                                                                            </div>
+                                                                            <div id="ctl00_ContentPlaceHolder1_divTrueFalseAnswer" style=" display:none">
+                                                                                
+                                                                            </div>
+                                                                            <div id="ctl00_ContentPlaceHolder1_divTextAnswer" style=" display:none">
+                                                                                <textarea name="ctl00$ContentPlaceHolder1$txtTextAnswer" rows="2" cols="20" id="ctl00_ContentPlaceHolder1_txtTextAnswer" class="textbox" onblur="SetActiveTextBox(this);" style="height:325px;width:690px;"></textarea>
+                                                                            </div>
+                                                                            <div>&nbsp;</div>
+                                                                            <div id="ctl00_ContentPlaceHolder1_divFileUpload" style="display:none;">
+                                                                                <input name="ctl00$ContentPlaceHolder1$fileUploadInput" type="file" id="ctl00_ContentPlaceHolder1_fileUploadInput" onchange="UploadFile(this)" style="font-size: 11pt; height: 24px; width: 190px;"><br>
+                                                                                <span id="ctl00_ContentPlaceHolder1_fileText"></span>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="4">
+                                                                            <div id="ctl00_ContentPlaceHolder1_pnlQuestion1">
+		  
+                                                                            <div id="ctl00_ContentPlaceHolder1_divNavigate">
+                                                            </div></div></td></tr></tbody><caption>
+                                                                <br>
+                                                                <table align="center" width="100%">
+                                                                    <tbody><tr>
+                                                                        <td>
+                                                                            <table>
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            
+                                                                                        </td>
+                                                                                        <td></td>
+                                                                                        <td>
+                                                                                            <input type="submit" name="ctl00$ContentPlaceHolder1$btnNext" value="NEXT QUESTION" onclick="IspostbackInitiated();" id="ctl00_ContentPlaceHolder1_btnNext" class="button">
+                                                                                            
+                                                                                        </td>
+                                                                                        <td></td>
+                                                                                        <td></td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody></table>
+                                                            </caption>
+                                                        
+	
+                                                                        
+                                                                    
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        
+
+                                                        
+                                                        
+                                                        
+
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        
+                                                    </tbody></table>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    <div id="sttModal" class="stt-modal">
+
+                                        <div class="stt-header">
+                                            <h2>Speech-to-Text</h2>
+                                            <p id="micStatusText">Microphone is off</p>
+                                        </div>
+
+                                        <!-- Waveform -->
+                                        <div class="stt-wave-container">
+                                            <canvas id="sttWaveform"></canvas>
+                                        </div>
+
+                                        <!-- Text Area -->
+                                        <textarea id="txtSTTBox" placeholder="Your speech will appear here...">                                        </textarea>
+
+                                        <!-- Footer Buttons -->
+                                        <div class="stt-footer">
+
+                                            <button type="button" class="btn mic-on" onclick="startSTT()">
+                                                🎤 Turn Microphone On
+                                            </button>
+
+                                            <button type="button" class="btn stop" onclick="stopSTT()">
+                                                ⏹ Stop
+                                            </button>
+
+                                            <button type="button" class="btn save" onclick="insertSTTText()">
+                                                Save Text
+                                            </button>
+
+                                            <button type="button" class="btn cancel" onclick="closeSTTModal()">
+                                                Cancel
+                                            </button>
+
+                                        </div>
+                                    </div>
+                                                                        
+</div>
+
+
+                         
+                        </td>
+                    </tr>
+                </tbody></table>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-left: 8px; padding-right: 5px;">
+                <table cellpadding="0" cellspacing="0" width="100%">
+                    <tbody><tr>
+                        <td style="background-color: #95c379; width: 100%; height: 5px; margin: 0px; padding: 0px;"></td>
+                    </tr>
+                </tbody></table>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-left: 8px; padding-right: 5px;" align="center">
+                <table cellpadding="0" cellspacing="0" class="style16" width="100%">
+                    <tbody><tr>
+                        <td align="left" valign="top" width="50%">
+                            <span id="ctl00_ContentPlaceHolder1_lblVersion">2026.09.0</span>
+                        </td>
+                        <td align="right" valign="top">
+                            
+                        </td>
+                    </tr>
+                </tbody></table>
+            </td>
+        </tr>
+    </tbody></table>
+
+
+        </div>
+        <div class="popup" data-popup="popup-warning">
+            <div class="popup-inner" style="background-color: white; border-radius: 5px;">
+                <div class="parent_nested" style="width: 100px; margin-top: 5%;">
+                    <div class="warning"></div>
+                </div>
+                <div class="parent_nested" style="width: 520px;">
+                    <div>
+                        <span id="subcontent"></span>
+                    </div>
+                </div>
+                <hr style="width: 100%; display: flex;">
+                <div class="footer">
+                    <p class="btn footerButton"><a href="#" data-popup-close="popup-warning" proceed="false">Cancel</a></p>
+                    <p class="btn footerButton" style="border: none; text-decoration: underline;">
+                        <a href="#" data-popup-close="popup-warning" buttontype="customize" proceed="true">Delete</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    
+ <script type="text/x-mathjax-config;executed=true" id="mathJaxScript">
+                                    MathJax.Hub.Config({
+                                      MathML: {
+                                       extensions: ["mml3.js"]
+                                      },messageStyle: "none",
+                                      TeX: {
+                                       extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+                                      },
+                                        jax: ["input/TeX","input/MathML","input/AsciiMath","output/HTML-CSS","output/NativeMML", "output/PreviewHTML"],
+                                        extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js", "fast-preview.js", "AssistiveMML.js"],
+                                      showMathMenu: false,
+                                      "HTML-CSS": {
+                                        preferredFont: "STIX",scale: 110  
+                                      },
+                                        tex2jax: {
+                                          inlineMath: [ ["\\(","\\)"] ],
+                                          displayMath: [ ["$$","$$"], ["\\[","\]"] ],
+                                          processEscapes: true
+                                        }
+                                    });
+                                    </script>
+                                   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML" id="mathJaxSRC"></script> <script type="text/javascript">
+                                        $(document).ready(function() {
+                                            var mathJaxCnfg = $('#mathJaxScript').text();
+                                            var mathJaxLink = $('#mathJaxSRC').attr('src');
+                                        $("iframe").each(function() {
+                                            $(this).load(function() {
+                                                var scriptConfig = document.createElement("script");
+                                                scriptConfig.type = "text/x-mathjax-config";
+                                                scriptConfig.text = mathJaxCnfg;
+                                                $(this).contents().find("head")[0].appendChild(scriptConfig);
+                                                var scriptSRC = document.createElement("script");
+                                                scriptSRC.type = "text/javascript";
+                                                scriptSRC.src = mathJaxLink;
+                                                $(this).contents().find("head")[0].appendChild(scriptSRC);
+                                            }).appendTo("#content");
+                                        });
+                                    });
+                                </script>
+<script type="text/javascript">
+//<![CDATA[
+HotTextToggle();PersistSelection();Sys.Application.add_init(function() {
+    $create(Telerik.Web.UI.RadAjaxManager, {"_updatePanels":"","ajaxSettings":[],"clientEvents":{OnRequestStart:"",OnResponseEnd:""},"defaultLoadingPanelID":"","enableAJAX":true,"enableHistory":false,"links":[],"styles":[],"uniqueID":"ctl00$RadAjaxManager","updatePanelsRenderMode":0}, null, null, $get("ctl00_RadAjaxManager"));
+});
+Sys.Application.add_init(function() {
+    $create(Telerik.Web.UI.RadWindow, {"_dockMode":false,"_renderMode":2,"behaviors":36,"clientStateFieldID":"ctl00_ContentPlaceHolder1_rwCalculator_ClientState","formID":"aspnetForm","height":"500px","iconUrl":"","minimizeIconUrl":"","name":"rwCalculator","reloadOnShow":true,"skin":"Default","title":"Calculator","visibleStatusbar":false,"width":"580px"}, {"close":ClientCloseHandler}, null, $get("ctl00_ContentPlaceHolder1_rwCalculator"));
+});
+Sys.Application.add_init(function() {
+    $create(Telerik.Web.UI.RadWindowManager, {"_renderMode":2,"clientStateFieldID":"ctl00_ContentPlaceHolder1_RadWindowManager1_ClientState","formID":"aspnetForm","iconUrl":"","minimizeIconUrl":"","name":"RadWindowManager1","skin":"Default","windowControls":"['ctl00_ContentPlaceHolder1_rwCalculator']"}, null, {"child":"ctl00_ContentPlaceHolder1_rwCalculator"}, $get("ctl00_ContentPlaceHolder1_RadWindowManager1"));
+});
+//]]>
+</script>
+</form>
+    <script>
+
+        var equalWebSiteKey = $('#ctl00_hdnEqualWebSiteKey').val();
+        /*
+        Want to customize your button? visit our documentation page:
+        https://login.equalweb.com/custom-button
+        */
+        window.interdeal = {
+            get sitekey() { return equalWebSiteKey },
+            get domains() {
+                return {
+                    "js": "https://cdn.equalweb.com/",
+                    "acc": "https://access.equalweb.com/"
+                }
+            },
+            "Position": "right",
+            "Menulang": "EN",
+            "draggable": true,
+            "btnStyle": {
+                "vPosition": [
+                    "99%",
+                    "99%"
+                ],
+                "margin": [
+                    "0",
+                    "0"
+                ],
+                "scale": [
+                    "0.5",
+                    "0.5"
+                ],
+                "color": {
+                    "main": "#2f7db2",
+                    "second": "#ffffff"
+                },
+                "icon": {
+                    "outline": false,
+                    "outlineColor": "#ffffff",
+                    "type": 11,
+                    "shape": "circle"
+                }
+            },
+
+        };
+
+        (function (doc, head, body) {
+            var coreCall = doc.createElement('script');
+            coreCall.src = interdeal.domains.js + 'core/5.1.13/accessibility.js';
+            coreCall.defer = true;
+            coreCall.integrity = 'sha512-70/AbMe6C9H3r5hjsQleJEY4y5l9ykt4WYSgyZj/WjpY/ord/26LWfva163b9W+GwWkfwbP0iLT+h6KRl+LoXA==';
+            coreCall.crossOrigin = 'anonymous';
+            coreCall.setAttribute('data-cfasync', true);
+            body ? body.appendChild(coreCall) : head.appendChild(coreCall);
+        })(document, document.head, document.body);
+    </script><script src="https://cdn.equalweb.com/core/5.1.13/accessibility.js" defer="" integrity="sha512-70/AbMe6C9H3r5hjsQleJEY4y5l9ykt4WYSgyZj/WjpY/ord/26LWfva163b9W+GwWkfwbP0iLT+h6KRl+LoXA==" crossorigin="anonymous" data-cfasync="true"></script>
+
+
+<iframe title="IND - Default Props" sandbox="allow-same-origin allow-scripts" id="INDdefaultPropIframe" src="about:blank" style="display: none;"></iframe><div class="xofo-nav"><a href="index.html#page1" target="_top">1 · Standards Mastery</a><a href="index.html#page2" target="_top">2 · Edit Assessment</a><a href="index.html#page3" target="_top">3 · Online Exam</a><a href="index.html#page2" target="_top">← Previous</a><a class="next" href="index.html#page2" target="_top">Next →</a></div></body></html>
